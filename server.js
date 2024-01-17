@@ -1,6 +1,10 @@
+require('dotenv').config()
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const connectDB = require("./config/db");
+
+connectDB()
 
 app.use(bodyParser.json());
 
@@ -33,6 +37,33 @@ app.get("/users/:id", (req, res) => {
   console.log(req);
   res.json(users);
 });
+
+app.put("/users/:id", (req, res) => {
+  const id = parseInt(req.params.id)
+  const userUpdate = req.body
+  const userIndex = users.findIndex((u) => u.id == id)
+
+  if (userIndex !== -1) {
+    let user = users[userIndex];//users(1) ekhane 2 number element nicchi,1 index
+    user = { ...user, ...userUpdate }
+    res.json(user)
+  } else {
+    res.status(404).json({ messeage: "users not found." })
+  }
+})
+
+app.delete('/users/:id', (req,res) => {
+    const id =parseInt(req.params.id)
+    const userIndex = users.findIndex((u) => u.id === id)
+
+    if(userIndex !== -1) {
+        users.splice(userIndex, 1)
+        res.json({message: "useer is deleted"})
+    }else {
+    const userIndex = users.findIndex((u) => u.id === id)
+
+    }
+})
 
 const port = 3002;
 app.listen(port, () => {

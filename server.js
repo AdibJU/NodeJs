@@ -1,71 +1,78 @@
 require('dotenv').config()
-const express = require("express");
-const app = express();
-const bodyParser = require("body-parser");
-const connectDB = require("./config/db");
+const express = require('express')
+const app = express()
+const bodyParser = require('body-parser')
+const connectDB = require('./config/db')
 
+// parse requests of content-type: application/json
+app.use(bodyParser.json())
+
+//connect with mongoDB
 connectDB()
 
-app.use(bodyParser.json());
+// routes
+app.use('/api/users', require('./routes/api/users'))
 
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to my application" });
-});
-
-let users = [];
-let lastid = 0;
-
-app.post("/users", (req, res) => {
-  const user = req.body;
-  user.id = ++lastid;
-  users.push(user);
-  res.json(user);
-});
-
-app.get("/users", (req, res) => {
-  res.json(users);
-});
-
-app.get("/users/:id", (req, res) => {
-  const id = req.params.id;
-  const user = users.find((u) => u.id == id);
-  if (user) {
-    res.json(user);
-  } else {
-    res.status(404).json({ messeage: "users not found." });
-  }
-  console.log(req);
-  res.json(users);
-});
-
-app.put("/users/:id", (req, res) => {
-  const id = parseInt(req.params.id)
-  const userUpdate = req.body
-  const userIndex = users.findIndex((u) => u.id == id)
-
-  if (userIndex !== -1) {
-    let user = users[userIndex];//users(1) ekhane 2 number element nicchi,1 index
-    user = { ...user, ...userUpdate }
-    res.json(user)
-  } else {
-    res.status(404).json({ messeage: "users not found." })
-  }
+// define a simple route
+app.get('/', (req, res) => {
+    res.json({message: 'Welcome to my application.'})
 })
 
-app.delete('/users/:id', (req,res) => {
-    const id =parseInt(req.params.id)
-    const userIndex = users.findIndex((u) => u.id === id)
+// let users = []
+// let lastId = 0
 
-    if(userIndex !== -1) {
-        users.splice(userIndex, 1)
-        res.json({message: "useer is deleted"})
-    }else {
-    const userIndex = users.findIndex((u) => u.id === id)
+// create a user
+// app.post('/users', (req, res) => {
+//     const user = req.body
+//     user.id = ++lastId
+//     users.push(user)
+//     res.json(user)
+// })
 
-    }
-})
+// retrieve all users
+// app.get('/users', (req, res) => {
+//     res.json(users)
+// })
+// retrieve one users
+// app.get('/users/:id', (req, res) => {
+//     const id = req.params.id
+//     const user = users.find((u) => u.id == id)
+//     if(user) {
+//         res.json(user)
+//     }else{
+//         res.status(404).json({message: "User not found."})
+//     }
+// })
 
-const port = 3002;
+// update a user by specific id
+// app.put('/users/:id',(req, res) => {
+//     const id = parseInt(req.params.id)
+//     const userUpdate = req.body
+//     const userIndex = users.findIndex((u)=>u.id == id)
+//     if (userIndex !== -1){
+//         let user = users[userIndex]
+//         user = { ...user, ...userUpdate}
+//         res.json(user)
+//     }else{
+//         res.status(404).json({message: "User not found."})
+//     }
+// })
+
+// delete a specific user
+// app.delete('/users/:id', (req, res) => {
+//     const id = parseInt(req.params.id)
+//     const userIndex = users.findIndex((u) => u.id === id)
+//     if(userIndex !== -1){
+//         users.splice(userIndex, 1)
+//         res.json({message: "User is deleted."})
+//     }else{
+//         res.status(404).json({message: "User not found."})
+//     }
+// })
+
+
+//* Start the Server
+const port = 3002
 app.listen(port, () => {
-  console.log(`Server is running at port ${port}`);
-});
+    console.log(`Server is running on port ${port}`)
+})

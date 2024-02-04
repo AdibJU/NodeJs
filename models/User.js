@@ -6,6 +6,12 @@ const userSchema = new mongoose.Schema({
     },
     lname : {
         type : String  
+    },
+    email : {
+        type : String  
+    },
+    password : {
+        type : String  
     }
 },{
     timestamps :true
